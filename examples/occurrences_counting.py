@@ -47,8 +47,26 @@ def mpy_to_text(line: bytes) -> str:
 
 
 if __name__ == '__main__':
-    with open(slot_path(), 'rb') as file:
-        next(file)
-        for line in file:
-            print(line)
-            print(mpy_to_text(line).rstrip())
+    first_slot = 3
+    last_slot = first_slot + 9
+
+    number_of_occurrences = [0 for _ in range(10)]
+
+    for slot in range(first_slot, last_slot + 1):
+
+        try:
+            with open(slot_path(slot), 'rb') as file:
+                print('Currently processing: slot #{}...'.format(slot))
+                if slot == first_slot:
+                    next(file)
+                next(file)  # Skip the line with file information.
+                for line in file:
+                    for i in range(10):
+                        number_of_occurrences[i] += mpy_to_text(line).count(
+                                                                        str(i))
+        except OSError:
+            continue
+
+    for i in range(10):
+        print('{} occurs {} times.'.format(i, number_of_occurrences[i]))
+    print('Total: {}'.format(sum(number_of_occurrences)))
