@@ -2,7 +2,7 @@ if __name__ == '__main__':
 
     slot = 0
 
-    with open('/flash/program{:02}/program.mpy'.format(slot), 'rb') as file:
+    with open('/flash/program/{:02}/program.mpy'.format(slot), 'rb') as file:
 
         next(file)  # Skip the line with file information.
 
