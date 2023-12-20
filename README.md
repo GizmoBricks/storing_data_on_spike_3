@@ -11,6 +11,16 @@ This project provides a solution to store and manage large data files for use wi
 > This method doesn't work with Spike Legacy or Mindstorms.
 > [Here](https://github.com/GizmoBricks/get_slots_paths) solution for Spike Legacy and Mindstorms.
 
+> [!IMPORTANT]
+>
+> nown Issue:
+> 
+> When the Hub is connected via Bluetooth and the code running on the Hub prints a substantial amount of data in the app console (several hundred lines), there is a possibility of data loss. This issue specifically pertains to the print() function.
+>
+> This problem does not affect the Hub's ability to work with data; it can still manage large data sets without any issues. However, the concern arises solely when using the print() function in a large loop under Bluetooth connectivity.
+>
+> Fortunately, when the Hub is connected via USB, all functions work correctly without any data loss or interruptions.
+
 # An "exploit"
 
 If a project contains Syntax Errors, it won't be stored in the Hub. Conversely, a Syntax-Error-free project will be precompiled into a MicroPython `.mpy` file by the app and stored in the Hub. However, the precompiled file content differs from the original.
