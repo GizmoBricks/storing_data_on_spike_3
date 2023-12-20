@@ -30,10 +30,9 @@ Follow these steps to load a data file into the Hub using the Spike 3 app:
 3.	Input or paste your data.
 4.	Enclose your data with triple quotes.
 5.	Select slot and run the Project.
-6.	Wait for the notification `Compiled` in the console.![File uploading](https://github.com/GizmoBricks/storing_data_on_spike_3/assets/127412675/d30268ed-2938-49f4-8581-97d002cc8a06)
-
 > [!NOTE]
-> Selecting 'Upload' won't provide a notification upon completion.	
+> Selecting 'Upload' won't provide a notification upon completion.	   
+6.	Wait for the notification `Compiled` in the console.![File uploading](https://github.com/GizmoBricks/storing_data_on_spike_3/assets/127412675/d30268ed-2938-49f4-8581-97d002cc8a06)
 
 > [!CAUTION]
 > Do not disconect the hub during file uploading to avoid interruptions or data loss.
