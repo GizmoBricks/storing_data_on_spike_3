@@ -1,10 +1,10 @@
 # About
-This project provides a solution to store and manage large data files for use with the Spike Prime Hub via its official app. It has been tested with the SPIKE 3 firmware and app.
+This project provides a solution to store and manage large data files for use with the Spike Prime Hub via its official app. It has been tested with the Spike 3 firmware and app.
 
 > [!NOTE]
 > Limitations:
 > 
-> The data file size limit is approximately `120 kb`. It is ~120 000 characters per file (~1 500 lines with 80 characters in each line). Less characters in line - more lines.
+> The data file size limit is approximately `120 kb`, equivalent to ~120 000 characters per file (~1 500 lines with 80 characters per line). Fewer characters per line allows for more lines.
 
 > [!IMPORTANT]
 > 
@@ -12,47 +12,43 @@ This project provides a solution to store and manage large data files for use wi
 > [Here](https://github.com/GizmoBricks/get_slots_paths) solution for Spike Legacy and Mindstorms.
 
 # An "exploit"
-If a project contains any Syntax Errors, it wouldn't be stored in the Hub at all.
 
-If a project doesn't contain any Syntax Errors, it will be precompiled by the app into a MicroPython `.mpy` file and stored in the Hub.
+If a project contains Syntax Errors, it won't be stored in the Hub. Conversely, a Syntax-Error-free project will be precompiled into a MicroPython `.mpy` file by the app and stored in the Hub. However, the precompiled file content differs from the original.
 
-A MicroPython file is a binary file. More importantly, as it's a precompiled file, its content will differ from the original file.
+The initial docstring of the file remains intact, which serves as the basis for this "exploit."
 
-But: first docstring of the file will be stored as is. This method capitalizes on this “exploit”.
+# Project Storage in the Hub
 
-# Where are projects stored in the Hub
+Projects reside in the `/flash/program/` directory, each having a designated directory labeled with two digits, representing the slot number. The full path to a project file appears as `/flash/program/{XX}/program.mpy`, where `{XX}` denotes the two-digit slot number (with a leading `0` for slots #1-9).
 
-All projects reside in the `/flash/program/` directory, each having its own directory. These directories are labeled with two digits, acting as the slot number.
+# Uploading Data Files to the Hub
 
-The full path to a project file looks like this: `/flash/program/{XX}/program.mpy`.
- - `{XX}` - two digit number of the slot. For slots 0-9, `0` added before slot number (`01` for slot #1).
+Follow these steps to load a data file into the Hub using the Spike 3 app:
 
-# How to load data file into the Hub
-
-1.	Create a Python Project with Spike 3 app.
+1.	Create a Python Project within Spike 3 app.
 2.	Delete any existing data within the project.
 3.	Input or paste your data.
-4.	Add triple qoutes before and after your data.
+4.	Enclose your data with triple quotes.
 5.	Select slot and run the Project.
-6.	Wait for the notification `PM: Compiled` in the console.![File uploading](https://github.com/GizmoBricks/storing_data_on_spike_3/assets/127412675/d30268ed-2938-49f4-8581-97d002cc8a06)
+6.	Wait for the notification `Compiled` in the console.![File uploading](https://github.com/GizmoBricks/storing_data_on_spike_3/assets/127412675/d30268ed-2938-49f4-8581-97d002cc8a06)
 
 > [!NOTE]
-> If you choose to press 'Upload', the app will not notify when upload is copleted.	
+> Selecting 'Upload' won't provide a notification upon completion.	
 
 > [!CAUTION]
 > Do not disconect the hub during file uploading to avoid interruptions or data loss.
 
 > [!IMPORTANT]
-> During the file uploading process, the hub might not run any programs.
+> During the file uploading process, the hub may not run any programs.
 
 > [!NOTE]
-> Larger data files might take some time to upload.
-> For instance, a [file containing 100 000 digits of pi](/examples/slot_3) took approximately 1 minutes to store.
+> Larger data files may require more time to upload.
+> For example, a [file containing 100 000 digits of pi](/examples/slot_3) took approximately 1 minutes to store.
 
-# How to read data from the file
+# Reading Data from the File
 
-Now you can read data from the slot with [this code](/examples/file_content_reading.py).
-This code ignore all raw bynary data and read the data which is stored in the docstring:
+To read data from the slot, use [this code](/examples/file_content_reading.py).
+This code ignore all raw binary data and reads the content stored in the docstring.
 ``` python
 if __name__ == '__main__':
 
@@ -79,42 +75,49 @@ Slot 0
 ABDEFGHIJKLMNOPQRSTUVWXYZ
 ```
 
+To run this example:
+* Upload [this data](/examples/slot_0) into slot #0.
+* Upload [this code](/examples/file_content_reading.py) into slot #19.
+* Run program from slot #19.
+
 # Functions
 
-As you can see, the code above is pretty simple. But it may be difficult to read and maintein if code will have many lines inside `try` statement.
+As you can see, the code above is pretty simple. But it may be difficult to read and maintain if code will have many lines inside `try` statement.
 
-So I created two functions to solve this problem.
+To simplify code readability, two functions have been created:
 
 ## The `slot_path` function
 
-[This function](/slot_path.py) constructs absolute path to 'program.mpy' for given `slot`.
+[This function](/slot_path.py) generates the absolute path to `program.mpy` for a given slot number [0-19].
 
-### Argument
+### Arguments
 
-  - `slot` (`int`, optional): the slot number for which the path is generated [0-19] (default 0).
+  - `slot` (`int`, optional): slot number for path generation (default: 0).
 
 ### Returns
-  - `str`: absolute path to 'program.mpy' for given `slot`.
+  - `str`: absolute path to `program.mpy` for the given `slot`.
 
 ### Raises
 
   - `ValueError` if `slot` is not in range [0-19].
-  - `RuntimeError` if given `slot` is empty.
+  - `RuntimeError` if the given `slot` is empty.
 
 ## The `mpy_to_text` function
 
-[This function](/mpy_to_text.py) converts a line of a '.mpy' file to a UTF-8 string. If the line contains raw binary data, it returns an empty string. To use, skip the first line of the file using 'next()' before calling this function.
+[This function](/mpy_to_text.py) converts a line of a `.mpy` file to a UTF-8 string. Returns an empty string if the line contains raw binary data.
+
+To use, skip the first line of the file using `next()` before calling this function.
 
 ### Argument
 
-  - `line` (`bytes`): a line of a '.mpy' file in binary format.
+  - `line` (`bytes`): line of a '.mpy' file in binary format.
 
 ### Returns
-  - `str`: a UTF-8 string decoded from the input line, or an empty string if the line contains raw binary data that cannot be decoded.
+  - `str`: UTF-8 string decoded from the input line, or an empty string if the line contains raw binary data that cannot be decoded.
 
 ## Examples
 ### File reading
-This [code](/examples/onother_way_to_read_file_content.py) demonstrates how to retrieve the file path associated with the slot number `0` and print the contents of the file. 
+This [code](/examples/onother_way_to_read_file_content.py) demonstrates retrieving the file path associated with slot number `0` and printing the file content. 
 ``` python
 def slot_path(slot: int = 0) -> str:
    # Rest of the slot_path implementation...
@@ -144,11 +147,12 @@ ABDEFGHIJKLMNOPQRSTUVWXYZ
 ```
 
 To run this example:
-* Upload [this file](/examples/onother_way_to_read_file_content.py) into slot #19.
-* Upload [this data](/examples/slot_0) into slot #0 and run program from slot #19.
+* Upload [this data](/examples/slot_0) into slot #0.
+* Upload [this code](/examples/onother_way_to_read_file_content.py) into slot #19.
+* Run program from slot #19.
 
 ### Count occurances in a large file
-This [code](/examples/occurrences_counting.py) demonstrates how to retrieve the file paths associated with the slots `3`-`12`, count and print the occurrences of each digit (0-9) within data files from the slots [3-12].
+This [code](/examples/occurrences_counting.py) Calculates and prints the occurrences of each digit (0-9) within data files from slots `3` to `12`.
 
 ``` python
 def slot_path(slot: int = 0) -> str:
@@ -215,7 +219,6 @@ Total: 1000000
 ```
 
 To run this example:
-* Upload [this file](/examples/occurrences_counting.py) into slot #19.
 * Upload [this data](/examples/slot_3) into slot #3.
 * Upload [this data](/examples/slot_4) into slot #4.
 * Upload [this data](/examples/slot_5) into slot #5.
@@ -226,6 +229,8 @@ To run this example:
 * Upload [this data](/examples/slot_10) into slot #10.
 * Upload [this data](/examples/slot_11) into slot #11.
 * Upload [this data](/examples/slot_12) into slot #12.
+* Upload [this code](/examples/occurrences_counting.py) into slot #19.
 * Run program from slot #19.
+  
 > [!NOTE]
-> It may take some time to store each data file and 2 and a half minutes to compete program.
+> Uploading and running the program may take considerable time, especially when handling multiple data files.
