@@ -13,7 +13,7 @@ This project provides a solution to store and manage large data files for use wi
 
 > [!IMPORTANT]
 >
-> nown Issue:
+> Known Issue:
 > 
 > When the Hub is connected via Bluetooth and the code running on the Hub prints a substantial amount of data in the app console (several hundred lines), there is a possibility of data loss. This issue specifically pertains to the print() function.
 >
