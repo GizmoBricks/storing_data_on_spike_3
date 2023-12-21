@@ -12,4 +12,4 @@ if __name__ == '__main__':
                 print(str(line.rstrip(), 'utf-8'))
             # If line can't be decoded - skip this line.
             except UnicodeError:
-                continue
+                break
