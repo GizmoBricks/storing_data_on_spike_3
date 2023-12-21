@@ -15,7 +15,7 @@ def slot_path(slot: int = 0) -> str:
     - RuntimeError if given slot is empty.
     """
     if not (0 <= slot <= 19):
-        raise ValueError('slot argument not in range [0-19].')
+        raise ValueError('slot argument is not in range [0-19].')
     path = '/flash/program/{:02}/program.mpy'.format(slot)
     try:
         with open(path) as _:
