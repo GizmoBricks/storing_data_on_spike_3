@@ -15,7 +15,7 @@ def slot_path(slot: int = 0) -> str:
     - RuntimeError if given slot is empty.
     """
     if not (0 <= slot <= 19):
-        raise ValueError('slot argument not in range [0-19].')
+        raise ValueError('slot argument is not in range [0-19].')
     path = '/flash/program/{:02}/program.mpy'.format(slot)
     try:
         with open(path) as _:
@@ -48,7 +48,12 @@ def mpy_to_text(line: bytes) -> str:
 
 if __name__ == '__main__':
     slot = 0
-    with open(slot_path(slot), 'rb') as file:
-        next(file)  # Skip the line with file information.
-        for line in file:
-            print(mpy_to_text(line).rstrip())
+    try:
+        path = slot_path(slot)
+    except RuntimeError:
+        print('Slot {} is empty.'.format(slot))
+    else:
+        with open(path, 'rb') as file:
+            next(file)  # Skip the line with file information.
+            for line in file:
+                print(mpy_to_text(line).rstrip())
