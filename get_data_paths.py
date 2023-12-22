@@ -1,5 +1,5 @@
 def get_data_paths(do_check: bool = False, check_word: str = '') -> dict:
-    paths = {}
+    paths_dict = {}
     for slot in range(20):
         path = '/flash/program/{:02}/program.mpy'.format(slot)
         
@@ -16,6 +16,6 @@ def get_data_paths(do_check: bool = False, check_word: str = '') -> dict:
         if do_check and line.split()[0] != check_word:
             continue
 
-        paths[slot] = path
+        paths_dict[slot] = path
     
-    return paths
+    return paths_dict
