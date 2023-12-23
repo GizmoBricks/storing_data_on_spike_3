@@ -48,17 +48,18 @@ def get_data_paths(do_check: bool = False, check_word: str = '') -> dict:
     return paths_dict
 
 
-slot = 1
-paths = get_data_paths()
-
-if slot in paths:
-    with open(paths[slot], 'rb') as file:
-        next(file)
-        for line in file:
-            try:
-                print(str(line, 'utf-8').rstrip())
-            except UnicodeError:
-                break
-else:
-    print('Slot {} is empty or file does not contain initial docstring.'
-          ''.format(slot))
+if __name__ == '__main__':
+    slot = 1
+    paths = get_data_paths()
+    
+    if slot in paths:
+        with open(paths[slot], 'rb') as file:
+            next(file)
+            for line in file:
+                try:
+                    print(str(line, 'utf-8').rstrip())
+                except UnicodeError:
+                    break
+    else:
+        print('Slot {} is empty or file does not contain initial docstring.'
+              ''.format(slot))
