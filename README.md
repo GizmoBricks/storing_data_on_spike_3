@@ -58,22 +58,23 @@ Follow these steps to load a data file into the Hub using the Spike 3 app:
 
 To read data from the slot, use [this code](/examples/file_content_reading.py).
 This code ignore all raw binary data and reads the content stored in the docstring.
-``` python
+```python
 if __name__ == '__main__':
 
     slot = 0
 
     with open('/flash/program/{:02}/program.mpy'.format(slot), 'rb') as file:
 
-        next(file)  # Skip the line with file information.
+        # Skip the line with file information.
+        next(file)
 
         for line in file:
             # Try to convert the line into 'utf-8' format and print it.
             try:
                 print(str(line.rstrip(), 'utf-8'))
-            # If line can't be decoded - skip this line.
+            # If line can't be decoded - stop iterating over the file:
             except UnicodeError:
-                continue
+                break
 ```
 Output:
 
@@ -89,61 +90,23 @@ To run this example:
 * Upload [this code](/examples/file_content_reading.py) into slot #19.
 * Run program from slot #19.
 
-# Functions
+# The `get_data_paths` function
 
-As you can see, the code above is pretty simple. But it may be difficult to read and maintain if code will have many lines inside `try` statement.
-
-To simplify code readability, two functions have been created:
-
-## The `slot_path` function
-
-[This function](/slot_path.py) generates the absolute path to `program.mpy` for a given slot number [0-19].
+[This function](/get_data_paths.py) 
 
 ### Arguments
 
-  - `slot` (`int`, optional): slot number for path generation (default: 0).
+  
 
 ### Returns
-  - `str`: absolute path to `program.mpy` for the given `slot`.
+  
 
-### Raises
-
-  - `ValueError` if `slot` is not in range [0-19].
-  - `RuntimeError` if the given `slot` is empty.
-
-## The `mpy_to_text` function
-
-[This function](/mpy_to_text.py) converts a line of a `.mpy` file to a UTF-8 string. Returns an empty string if the line contains raw binary data.
-
-To use, skip the first line of the file using `next()` before calling this function.
-
-### Argument
-
-  - `line` (`bytes`): line of a '.mpy' file in binary format.
-
-### Returns
-  - `str`: UTF-8 string decoded from the input line, or an empty string if the line contains raw binary data that cannot be decoded.
 
 ## Examples
 ### File reading
 This [code](/examples/onother_way_to_read_file_content.py) demonstrates retrieving the file path associated with slot number `0` and printing the file content. 
 ``` python
-def slot_path(slot: int = 0) -> str:
-   # Rest of the slot_path implementation...
-    return path
 
-
-def mpy_to_text(line: bytes) -> str:
-    # Rest of the mpy_to_text implementation...
-    return output
-
-
-if __name__ == '__main__':
-    slot = 0
-    with open(slot_path(slot), 'rb') as file:
-        next(file)  # Skip the line with file information.
-        for line in file:
-            print(mpy_to_text(line).rstrip())
 ```
 
 Output:
@@ -163,41 +126,8 @@ To run this example:
 ### Count occurances in a large file
 This [code](/examples/occurrences_counting.py) Calculates and prints the occurrences of each digit (0-9) within data files from slots `3` to `12`.
 
-``` python
-def slot_path(slot: int = 0) -> str:
-   # Rest of the slot_path implementation...
-    return path
+```python
 
-
-def mpy_to_text(line: bytes) -> str:
-    # Rest of the mpy_to_text implementation...
-    return output
-
-
-if __name__ == '__main__':
-    first_slot = 3
-    last_slot = first_slot + 9
-
-    number_of_occurrences = [0 for _ in range(10)]
-
-    for slot in range(first_slot, last_slot + 1):
-
-        try:
-            with open(slot_path(slot), 'rb') as file:
-                print('Currently processing: slot #{}...'.format(slot))
-                if slot == first_slot:
-                    next(file)
-                next(file)  # Skip the line with file information.
-                for line in file:
-                    for i in range(10):
-                        number_of_occurrences[i] += mpy_to_text(line).count(
-                                                                        str(i))
-        except OSError:
-            continue
-
-    for i in range(10):
-        print('{} occurs {} times.'.format(i, number_of_occurrences[i]))
-    print('Total: {}'.format(sum(number_of_occurrences)))
 ```
 
 Output:
