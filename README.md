@@ -1,35 +1,57 @@
 # About
-This project provides a solution to store and manage large data files for use with the Spike Prime Hub via its official app. It has been tested with the Spike 3 firmware and app.
+This project provides a solution to store and manage large data files 
+for use with the Spike Prime Hub via its official app. 
+It has been tested with the Spike 3 firmware and app.
 
 > [!NOTE]
 > Limitations:
 > 
-> The data file size limit is approximately `120 kb`, equivalent to ~120 000 characters per file (~1 500 lines with 80 characters per line). Fewer characters per line allows for more lines.
+> The data file size limit is approximately `120 kb`, 
+> equivalent to ~120 000 characters per file 
+> (~1 500 lines with 80 characters per line). 
+> Fewer characters per line allows for more lines.
 
 > [!IMPORTANT]
 > 
 > This method doesn't work with Spike Legacy or Mindstorms.
-> [Here](https://github.com/GizmoBricks/get_slots_paths) solution for Spike Legacy and Mindstorms.
+> [Here](https://github.com/GizmoBricks/get_slots_paths) solution 
+> for Spike Legacy and Mindstorms.
 
 > [!IMPORTANT]
 >
 > Known Issue:
 > 
-> When the Hub is connected via Bluetooth and the code running on the Hub prints a substantial amount of data in the app console (several hundred lines), there is a possibility of data loss. This issue specifically pertains to the print() function.
+> When the Hub is connected via Bluetooth and the code running 
+> on the Hub prints a substantial amount of data in the app console 
+> (several hundred lines), there is a possibility of data loss. 
+> This issue specifically pertains to the print() function.
 >
-> This problem does not affect the Hub's ability to work with data; it can still manage large data sets without any issues. However, the concern arises solely when using the print() function in a large loop under Bluetooth connectivity.
+> This problem does not affect the Hub's ability to work with data; 
+> it can still manage large data sets without any issues. 
+> However, the concern arises solely when using the print() function 
+> in a large loop under Bluetooth connectivity.
 >
-> Fortunately, when the Hub is connected via USB, all functions work correctly without any data loss or interruptions.
+> Fortunately, when the Hub is connected via USB, 
+> all functions work correctly without any data loss or interruptions.
 
 # An "exploit"
 
-If a project contains Syntax Errors, it won't be stored in the Hub. Conversely, a Syntax-Error-free project will be precompiled into a MicroPython `.mpy` file by the app and stored in the Hub. However, the precompiled file content differs from the original.
+If a project contains Syntax Errors, it won't be stored in the Hub. 
+Conversely, a Syntax-Error-free project will be precompiled 
+into a MicroPython `.mpy` file by the app and stored in the Hub. 
+However, the precompiled file content differs from the original.
 
-The initial docstring of the file remains intact, which serves as the basis for this "exploit."
+The initial docstring of the file remains intact, 
+which serves as the basis for this "exploit."
 
 # Project Storage in the Hub
 
-Projects reside in the `/flash/program/` directory, each having a designated directory labeled with two digits, representing the slot number. The full path to a project file appears as `/flash/program/{XX}/program.mpy`, where `{XX}` denotes the two-digit slot number (with a leading `0` for slots #1-9).
+Projects reside in the `/flash/program/` directory, 
+each having a designated directory labeled with two digits, 
+representing the slot number. The full path to a project file 
+appears as `/flash/program/{XX}/program.mpy`, 
+where `{XX}` denotes the two-digit slot number 
+(with a leading `0` for slots #1-9).
 
 # Uploading Data Files to the Hub
 
@@ -42,21 +64,24 @@ Follow these steps to load a data file into the Hub using the Spike 3 app:
 5.	Select slot and run the Project.
 > [!NOTE]
 > Selecting 'Upload' won't provide a notification upon completion.	   
-6.	Wait for the notification `Compiled` in the console.![File uploading](https://github.com/GizmoBricks/storing_data_on_spike_3/assets/127412675/d30268ed-2938-49f4-8581-97d002cc8a06)
+6.	Wait for the notification `Compiled` in the console.
+    ![File uploading](https://github.com/GizmoBricks/storing_data_on_spike_3/assets/127412675/d30268ed-2938-49f4-8581-97d002cc8a06)
 
 > [!CAUTION]
-> Do not disconect the hub during file uploading to avoid interruptions or data loss.
+> Do not disconnect the hub during file uploading to avoid interruptions 
+> or data loss.
 
 > [!IMPORTANT]
 > During the file uploading process, the hub may not run any programs.
 
 > [!NOTE]
 > Larger data files may require more time to upload.
-> For example, a [file containing 100 000 digits of pi](/examples/slot_3) took approximately 1 minutes to store.
+> For example, a [file containing 100 000 digits of pi](/examples/slot_3) 
+> took approximately 1 minutes to store.
 
 # Reading Data from the File
 
-To read data from the slot, use [this code](/examples/file_content_reading.py).
+The code below demonstrate how to read data from the slot #0.
 This code ignore all raw binary data and reads the content stored in the docstring.
 ```python
 if __name__ == '__main__':
