@@ -1,71 +1,84 @@
-def slot_path(slot: int = 0) -> str:
+def get_data_paths(do_check: bool = False, check_word: str = '') -> dict:
     """
-    Constructs absolute path to 'program.mpy' for given slot.
+    This function retrieves the paths associated with available slots
+    with files which contain initial docstring.
+    Function ignores slots with files which does not contain
+    initial docstring.
 
     Args:
-    - slot (int, optional): The slot number
-                            for which the path is generated [0-19]
-                            (default 0).
+    - do_check (bool, optional): Flag to indicate whether to perform
+                                a file format check (default: False).
+    - check_word (str, optional): The word used for file format checking
+                                (default: empty string).
 
     Returns:
-    - str: absolute path to 'program.mpy' for given slot.
+    - dict: The dictionary of available slots and their paths,
+            or empty dictionary, if no available slots.
 
-    Raises:
-    - ValueError if slot is not in range [0-19].
-    - RuntimeError if given slot is empty.
+    File format check:
+    If the do_check argument is True, the function compares
+    the first word of the initial docstring with check_word.
+    If they match, the test is passed.
+    If they are different, that slot-path pair won't be included
+    into the dictionary.
+
+    Note: this function does not work with SPIKE Legacy or
+    Mindstorms Robot Inventor.
     """
-    if not (0 <= slot <= 19):
-        raise ValueError('slot argument not in range [0-19].')
-    path = '/flash/program/{:02}/program.mpy'.format(slot)
-    try:
-        with open(path) as _:
-            pass
-    except OSError:
-        raise RuntimeError('Slot {} is empty.'.format(slot))
-    return path
+    paths_dict = {}
+    for slot in range(20):
+        path = '/flash/program/{:02}/program.mpy'.format(slot)
 
+        try:
+            with open(path, 'rb') as test_file:
+                if b'__doc__' not in test_file.readline():
+                    continue
 
-def mpy_to_text(line: bytes) -> str:
-    """
-    Converts a line of a '.mpy' file to a UTF-8 string.
-    If the line contains raw binary data, it returns an empty string.
-    To use, skip the first line of the file using 'next()'
-    before calling this function.
+                line = str(test_file.readline(), 'utf-8')
 
-    Args:
-    - line (bytes): A line of a '.mpy' file in binary format.
+        except (OSError, UnicodeError) as _:
+            continue
 
-    Returns:
-    - str: A UTF-8 string decoded from the input line, or an empty string
-        if the line contains raw binary data that cannot be decoded.
-    """
-    try:
-        output = str(line, 'utf_8', 'ignore')
-    except UnicodeError:
-        output = ''
-    return output
+        if do_check and line.split()[0] != check_word:
+            continue
+
+        paths_dict[slot] = path
+
+    return paths_dict
 
 
 if __name__ == '__main__':
-    first_slot = 3
-    last_slot = first_slot + 9
 
+    first_slot = 3
+    num_of_slots = 10
+
+    paths = get_data_paths()
     number_of_occurrences = [0 for _ in range(10)]
 
-    for slot in range(first_slot, last_slot + 1):
+    for slot in range(first_slot, first_slot + num_of_slots):
 
-        try:
-            with open(slot_path(slot), 'rb') as file:
+        if slot in paths:
+
+            with open(paths[slot], 'rb') as file:
+
                 print('Currently processing: slot #{}...'.format(slot))
+                next(file)  # Skip the line with file information.
+
+                # Skip line to avoid counting '3' before
+                # the decimal point:
                 if slot == first_slot:
                     next(file)
-                next(file)  # Skip the line with file information.
+
                 for line in file:
-                    for i in range(10):
-                        number_of_occurrences[i] += mpy_to_text(line).count(
-                                                                        str(i))
-        except OSError:
-            continue
+                    try:
+                        for i in range(10):
+                            number_of_occurrences[i] += str(
+                                line, 'utf-8').count(str(i))
+                    except UnicodeError:
+                        break
+        else:
+            print("Slot {} is empty or doesn't contain initial docstring. "
+                  "It will be skipped when counting occurrences.")
 
     for i in range(10):
         print('{} occurs {} times.'.format(i, number_of_occurrences[i]))

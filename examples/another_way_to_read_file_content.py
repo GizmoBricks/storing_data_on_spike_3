@@ -17,15 +17,14 @@ def get_data_paths(do_check: bool = False, check_word: str = '') -> dict:
 
     File format check:
     If the do_check argument is True, the function compares
-    the first word of the file with check_word.
+    the first word of the initial docstring with check_word.
     If they match, the test is passed.
-    If they are different, that slot-path pair is excluded
-    from the dictionary.
+    If they are different, that slot-path pair won't be included
+    into the dictionary.
 
     Note: this function does not work with SPIKE Legacy or
     Mindstorms Robot Inventor.
     """
-
     paths_dict = {}
     for slot in range(20):
         path = '/flash/program/{:02}/program.mpy'.format(slot)
