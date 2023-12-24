@@ -82,7 +82,8 @@ Follow these steps to load a data file into the Hub using the Spike 3 app:
 # Reading Data from the File
 
 The code below demonstrate how to read data from the slot #0.
-This code ignore all raw binary data and reads the content stored in the docstring.
+This code ignore all raw binary data and reads the content stored 
+in the docstring.
 ```python
 if __name__ == '__main__':
 
@@ -119,19 +120,72 @@ To run this example:
 
 [This function](/get_data_paths.py) 
 
+This function retrieves the paths associated with available slots
+with files which contain initial docstring. 
+Function ignores slots with files which does not contain initial docstring.
+
 ### Arguments
 
-  
+- do_check (bool, optional): Flag to indicate whether to perform
+  a file format check (default: False).
+- check_word (str, optional): The word used for file format checking
+  (default: empty string).  
 
 ### Returns
   
+- dict: The dictionary of available slots and their paths, 
+  or empty dictionary, if no available slots.
+> [!NOTE]
+> The dictionary is not sorted.
 
+### What the function exactly does
+
+This get_data_path function is designed to scan through a directory structure 
+that contains files named `program.mpy` in various slots (from 0 to 19).
+It tries to open and read these files. In case an `OSError` or `UnicodeError` 
+it continues the next iteration, skipping the current slot.
+
+Then it reads the first line of the file, and if the line does not contain
+the bytes object b'__doc__', it continues to the next slot.
+
+Then the function applies optional file format check:
+* If do_check is set to True, it performs an additional check 
+  based on the check_word.
+* It reads first word of the line and compares it with check_word.
+* If the condition fails
+  (i.e., the first word of the line is not equal to check_word), 
+  it continues to the next slot.
+
+If all conditions pass, it stores the slot number as the key 
+in the paths_dict dictionary and associates it with the path (file path) 
+as the corresponding value.
 
 ## Examples
 ### File reading
-This [code](/examples/onother_way_to_read_file_content.py) demonstrates retrieving the file path associated with slot number `0` and printing the file content. 
-``` python
+This code demonstrates retrieving the file path associated 
+with slot number `0` and printing the file content. 
 
+```python
+def get_data_paths(do_check: bool = False, check_word: str = '') -> dict:
+    # Rest of the function implementation...
+    return paths_dict
+
+
+if __name__ == '__main__':
+    slot = 1
+    paths = get_data_paths()
+    
+    if slot in paths:
+        with open(paths[slot], 'rb') as file:
+            next(file)
+            for line in file:
+                try:
+                    print(str(line, 'utf-8').rstrip())
+                except UnicodeError:
+                    break
+    else:
+        print('Slot {} is empty or file does not contain initial docstring.'
+              ''.format(slot))
 ```
 
 Output:
@@ -145,14 +199,55 @@ ABDEFGHIJKLMNOPQRSTUVWXYZ
 
 To run this example:
 * Upload [this data](/examples/slot_0) into slot #0.
-* Upload [this code](/examples/onother_way_to_read_file_content.py) into slot #19.
+* Upload [this code](/examples/another_way_to_read_file_content.py) into slot #19.
 * Run program from slot #19.
 
-### Count occurances in a large file
-This [code](/examples/occurrences_counting.py) Calculates and prints the occurrences of each digit (0-9) within data files from slots `3` to `12`.
+### Count occurrences in a large file
+This code calculates and prints the occurrences of each digit (0-9) 
+within data files from slots `3` to `12`.
 
 ```python
+def get_data_paths(do_check: bool = False, check_word: str = '') -> dict:
+    # Rest of the function implementation...
+    return paths_dict
 
+
+if __name__ == '__main__':
+
+    first_slot = 3
+    num_of_slots = 10
+
+    paths = get_data_paths()
+    number_of_occurrences = [0 for _ in range(10)]
+
+    for slot in range(first_slot, first_slot + num_of_slots):
+
+        if slot in paths:
+
+            with open(paths[slot], 'rb') as file:
+
+                print('Currently processing: slot #{}...'.format(slot))
+                next(file)  # Skip the line with file information.
+
+                # Skip line to avoid counting '3' before
+                # the decimal point:
+                if slot == first_slot:
+                    next(file)
+
+                for line in file:
+                    try:
+                        for i in range(10):
+                            number_of_occurrences[i] += str(
+                                line, 'utf-8').count(str(i))
+                    except UnicodeError:
+                        break
+        else:
+            print("Slot {} is empty or doesn't contain initial docstring. "
+                  "It will be skipped when counting occurrences.")
+
+    for i in range(10):
+        print('{} occurs {} times.'.format(i, number_of_occurrences[i]))
+    print('Total: {}'.format(sum(number_of_occurrences)))
 ```
 
 Output:
