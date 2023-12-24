@@ -56,7 +56,7 @@ Follow these steps to load a data file into the Hub using the Spike 3 app:
 
 # Reading Data from the File
 
-To read data from the slot, use [this code](/examples/file_content_reading.py).
+The code below demonstrate how to read data from the slot #0.
 This code ignore all raw binary data and reads the content stored in the docstring.
 ```python
 if __name__ == '__main__':
