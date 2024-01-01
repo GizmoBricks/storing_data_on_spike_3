@@ -118,9 +118,7 @@ To run this example:
 
 # The `get_data_paths` function
 
-[This function](/get_data_paths.py) 
-
-This function retrieves the paths associated with available slots
+[This function](/get_data_paths.py) retrieves the paths associated with available slots
 with files which contain initial docstring. 
 Function ignores slots with files which does not contain initial docstring.
 
