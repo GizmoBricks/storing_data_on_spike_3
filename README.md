@@ -51,7 +51,7 @@ each having a designated directory labeled with two digits,
 representing the slot number. The full path to a project file 
 appears as `/flash/program/{XX}/program.mpy`, 
 where `{XX}` denotes the two-digit slot number 
-(with a leading `0` for slots #1-9).
+(with a leading `0` for slots #0-9).
 
 # Uploading Data Files to the Hub
 
